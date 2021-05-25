@@ -4,6 +4,8 @@ import cookieParser from 'cookie-parser'
 import compress from 'compression'
 import cors from 'cors'
 import helmet from 'helmet'
+import models from './models/index'
+import routes from './routes/IndexRoute'
 
 
 
@@ -20,8 +22,15 @@ app.use(compress())
 // enable CORS - Cross Origin Resource Sharing
 app.use(cors());
 
-
-
+// 1. client-side 
+// import React from 'react'
+// import ReactDOMServer from 'react-dom/server'
+// import MainRouter from './../client/MainRouter'
+// import { StaticRouter } from 'react-router-dom'
+// import Template from './../template'
+import devBundle from './devBundle'
+//comment script dibawah before building for productio?
+devBundle.compile(app)
 
 const CURRENT_WORKING_DIR = process.cwd()
 app.use('/dist', express.static(path.join(CURRENT_WORKING_DIR, 'dist')))
@@ -36,6 +45,12 @@ app.use(async (req, res, next) => {
     req.context = {models};
     next();
 });
+app.use('/api/villas', routes.VillaRoute);
+app.use('/api/users', routes.UserRoute);
+app.use('/api/orders', routes.OrderRoute);
+app.use('/api/cart', routes.VicaRoute);
+app.use('/api/comments', routes.VicoRoute);
+app.use('/api/upload', routes.UploadRoute);
 
 
 
