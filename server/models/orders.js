@@ -19,15 +19,15 @@ const orders = (sequelize, DataTypes) => {
       allowNull: true
     },
     order_tax: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DECIMAL,
       allowNull: true
     },
     order_discount: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DECIMAL,
       allowNull: true
     },
     order_total_due: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DECIMAL,
       allowNull: true
     },
     order_total_days: {
@@ -77,6 +77,9 @@ const orders = (sequelize, DataTypes) => {
       },
     ]
   });
+  Orders.associate = models => {
+    Orders.belongsTo(models.Users,{foreignKey: 'order_user_id'});
+  }
   return Orders
 };
 export default orders;

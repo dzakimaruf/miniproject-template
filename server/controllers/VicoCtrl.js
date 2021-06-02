@@ -1,7 +1,13 @@
 import { sequelize } from '../../config/config-db';
 
 const findAll = async (req, res) => {
-    const villas_comments = await req.context.models.Villas_comments.findAll();
+    const villas_comments = await req.context.models.Villas_comments.findAll(
+        {
+            include: [{
+                all: true
+            }]
+        }
+    );
     return res.send(villas_comments);
 }
 
@@ -15,7 +21,7 @@ const findOne = async (req, res) => {
 const create = async (req, res) => {
     const villas_comments = await req.context.models.Villas_comments.create({
         vico_comments:req.body.vico_comments,
-        vico_created_on:req.body.vica_created_on,
+        vico_created_on:req.body.vico_created_on,
         vico_rating:req.body.vico_rating,
         vico_villa_id:req.body.vico_villa_id,
         vico_user_id:req.body.vico_user_id

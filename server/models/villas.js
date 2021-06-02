@@ -38,10 +38,6 @@ const villas = (sequelize, DataTypes) => {
       type: DataTypes.STRING(255),
       allowNull: true
     },
-    villa_status: {
-      type: DataTypes.STRING(15),
-      allowNull: true
-    },
     villa_price: {
       type: DataTypes.INTEGER,
       allowNull: true
@@ -69,7 +65,12 @@ const villas = (sequelize, DataTypes) => {
       },
     ]
   });
-
+  Villas.associate = models => {
+    Villas.hasMany(models.Villas_comments,{foreignKey: 'vico_villa_id', onDelete: 'CASCADE'});
+    Villas.hasMany(models.Line_items,{foreignKey: 'lite_villa_id', onDelete: 'CASCADE'});
+    Villas.belongsTo(models.Users,{foreignKey: 'villa_user_id'});
+  };
+  
   return Villas
 };
 

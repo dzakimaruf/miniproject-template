@@ -53,6 +53,12 @@ const users = (sequelize, DataTypes) => {
       },
     ]
   });
+  Users.associate = models => {
+    Users.hasMany(models.Villas, { foreignKey: 'villa_user_id', onDelete: 'CASCADE' });
+    Users.hasMany(models.Orders, { foreignKey: 'order_user_id', onDelete: 'CASCADE' });
+    Users.hasMany(models.Villa_cart, { foreignKey: 'vica_user_id', onDelete: 'CASCADE' });
+  };
+
   return Users
 };
 export default users;

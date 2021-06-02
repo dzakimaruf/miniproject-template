@@ -47,10 +47,11 @@ app.use(async (req, res, next) => {
 });
 app.use('/api/villas', routes.VillaRoute);
 app.use('/api/users', routes.UserRoute);
-app.use('/api/orders', routes.OrderRoute);
-app.use('/api/cart', routes.VicaRoute);
+//app.use('/api/orders', routes.OrderRoute);
+//app.use('/api/carts', routes.VicaRoute);
 app.use('/api/comments', routes.VicoRoute);
-app.use('/api/upload', routes.UploadRoute);
+app.use('/api/uploads', routes.UploadRoute);
+app.use('/api/lite', routes.CheckoutRoute);
 
 
 

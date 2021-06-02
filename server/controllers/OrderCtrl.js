@@ -1,83 +1,85 @@
-import { sequelize } from '../../config/config-db';
-import orders from '../models/orders';
+const create = async (req,res, next) => {
+    const {harga,discount} = req.price;
+    const {order_user_id} = req.body;
+    const {item}=req.data;
+    const {order_start_date}= req.body;
+    
+
+    let x = item[0].lite_days;
+    const realdiscount = ( x * discount);
+    const to = (harga * x) - realdiscount;
+    const tax = (to * 5/100);
+    const total = to + tax;
+    const today = order_start_date;
+    const enddate= new Date(today)
+    enddate.setDate(enddate.getDate() + x)
+    
+    
 
 
-const findAll = async (req, res) => {
-    const orders = await req.context.models.Orders.findAll();
-    return res.send(orders);
-}
-const findOne = async (req, res) => {
-    const orders = await req.context.models.Orders.findOne({
-        where: { order_id: req.params.id }
-    });
-    return res.send(orders);
-}
-
-const create = async (req, res) => {
-    const orders = await req.context.models.Orders.create({
-        order_created_on: req.body.order_created_on,
-        order_start_date: req.body.order_start_date,
-        order_end_date: req.body.order_end_date,
-        order_tax:req.body.order_tax,
-        order_discount:req.body.order_discount,
-        order_total_due:req.body.order_total_due,
-        order_total_days:req.body.order_total_days,
-        order_description: req.body.order_description,
-        order_payt_trx_number:req.body.order_payt_trx_number,
+try {        
+    const order = await req.context.models.Orders.create({
+        order_tax: tax,
+        order_discount: realdiscount,
+        order_total_due: total,
+        order_user_id: order_user_id,
+        order_created_on: new Date(),
+        order_start_date: order_start_date,
+        order_end_date: enddate,
+        order_total_days: x,
+        order_description:req.body.order_description,
         order_city:req.body.order_city,
         order_address:req.body.order_address,
-        order_status: req.body.order_status,
-        order_user_id:req.body.order_user_id,
-    });
-    return res.send(orders);
-}
+        order_status:"Booked"
 
-const update = async (req, res) => {
-    const orders = await req.context.models.Orders.update(
-        {
-            order_created_on: req.body.order_created_on,
-            order_start_date: req.body.order_start_date,
-            order_end_date: req.body.order_end_date,
-            order_tax:req.body.order_tax,
-            order_discount:req.body.order_discount,
-            order_total_due:req.body.order_total_due,
-            order_total_days:req.body.order_total_days,
-            order_description: req.body.order_description,
-            order_payt_trx_number:req.body.order_payt_trx_number,
-            order_city:req.body.order_city,
-            order_address:req.body.order_address,
-            order_status: req.body.order_status,
-            order_user_id:req.body.order_user_id,
-        },
-        { returning: true, where: { order_id: req.params.id } }
-    );
-    return res.send(orders);
-}
+     
 
-const remove = async (req, res) => {
-    await req.context.models.Orders.destroy({
-        where: { order_id: req.params.id }
-    }).then(result => {
-        console.log(result);
-        return res.send("delete " + result + " rows.");
-    });
-
-}
-
-const rawSQL = async (req, res) => {
-    await sequelize.query('SELECT * FROM regions where order_id = :orderId',
-        { replacements: { orderId: parseInt(req.params.id) }, type: sequelize.QueryTypes.SELECT }
-    ).then(result => {
-        return res.send(result);
+       /*  order_end_date :  */
     })
-}
 
+    req.order = order;
+    
+    next();
+} catch (error) {
+     console.log(error);
+}
+}
+// const update = async (req,res, next) => {
+//     const {harga, discount} = req.price;
+//     const {order_user_id} = req.body;
+//     const tax = harga * 5/100; //ppn
+//     const total = harga - tax;
+    
+
+
+// try {        
+//     const order = await req.context.models.Orders.create({
+//         order_tax: tax,
+//         order_discount: discount,
+//         order_total_due: total,
+//         order_user_id: order_user_id,
+//         order_created_on: new Date(),
+//         // order_start_date: req.body.order_start_date,
+//         // order_end_date: req.body.order_end_date,
+//         // order_total_days: req.body.order_total_days,
+//         // order_description:req.body.order_description,
+//         // order_city:req.body.order_city,
+//         // order_address:req.body.order_address,
+//         // order_status:req.body.req_status
+
+     
+
+//        /*  order_end_date :  */
+//     })
+
+//     req.order = order;
+    
+//     next();
+// } catch (error) {
+//      console.log(error);
+// }
+// }
 
 export default {
-    findAll,
-    findOne,
-    create,
-    update,
-    remove,
-    rawSQL
+create
 }

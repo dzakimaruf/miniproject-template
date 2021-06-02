@@ -45,6 +45,7 @@ const villas_images = (sequelize, DataTypes) => {
       },
     ]
   });
+  
   return Villas_images
 };
 export default villas_images; 

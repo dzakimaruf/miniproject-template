@@ -1,10 +1,12 @@
 import VillaCtrl from "./VillaCtrl";
 import UserCtrl from "./UserCtrl";
-import OrderCtrl from "./OrderCtrl";
+// import OrderCtrl from "./OrderCtrl";
 import VicaCtrl from "./VicaCtrl";
 import VicoCtrl from "./VicoCtrl";
 import ViimCtrl from "./ViimCtrl";
 import UploadCtrl from "./UploadDownloadCtrl";
+import LiteCtrl from "./LiteCtrl";
+import OrderCtrl from "./OrderCtrl"
 
 export default {
     VillaCtrl,
@@ -13,5 +15,6 @@ export default {
     VicaCtrl,
     VicoCtrl,
     ViimCtrl,
-    UploadCtrl
+    UploadCtrl,
+    LiteCtrl
 }

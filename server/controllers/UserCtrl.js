@@ -11,6 +11,9 @@ const pathDir = __dirname + '../../uploads/';
 const findAll = async (req, res) => {
   const users = await req.context.models.Users.findAll({
     attributes: { exclude: ['user_password', 'user_salt'] },
+    include:[{
+      all:true
+    }]
   });
   return res.send(users);
 }
@@ -138,6 +141,7 @@ const signout = (req, res) => {
   })
 }
 
+
 const requireSignin = expressJwt({
   secret: config.jwtSecret,
   userProperty: 'auth',
@@ -211,10 +215,18 @@ form
 
     });
 
-
 }
-
-
+const checkL = async (req, res, next) => {
+  try{
+    const data = await req.context.models .Users.findOne({
+      where: {user_id: req.params.id}
+    })
+    req.user =data 
+    next()
+  }catch (error){
+    console.log(error)
+  }
+}
 
 // Gunakan export default agar semua function bisa dipakai di file lain.
 export default {
@@ -224,5 +236,6 @@ export default {
   requireSignin,
   signout,
   update,
-  hasAuthorization
+  hasAuthorization,
+  checkL
 }

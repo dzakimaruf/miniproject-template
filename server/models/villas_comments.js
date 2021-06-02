@@ -49,6 +49,12 @@ const villas_comments = (sequelize, DataTypes) => {
       },
     ]
   });
+  
+  Villas_comments.associate = models => {
+    Villas_comments.belongsTo(models.Villas,{foreignKey: 'vico_villa_id'});
+    Villas_comments.belongsTo(models.Users,{foreignKey: 'vico_user_id'});
+  };
+  
   return Villas_comments
 };
 export default villas_comments;

@@ -1,60 +1,70 @@
 import { sequelize } from '../../config/config-db';
+import villa_cart from '../models/villa_cart';
 
-const findAll = async (req, res) => {
-    const villa_cart = await req.context.models.Villa_cart.findAll();
-    return res.send(villa_cart);
+
+const createc = async (req, res, next) => {
+    try {
+        const user = req.users
+
+        const cart = await req.context.models.Villa_cart.create(
+            {
+                vica_status: "open",
+                vica_user_id: user.user_id,
+            }
+        );
+        req.cart = villa_cart
+        next()
+    } catch (error) {
+        return res.send(error)
+    }
 }
 
-const findOne = async (req, res) => {
+const findOne1 = async (req, res, next) => {
     const villa_cart = await req.context.models.Villa_cart.findOne({
-        where: { vica_id: req.params.id }
+        include: [{
+            all: true
+        }],
+        where: { vica_user_id: req.body.order_user_id }
     });
-    return res.send(villa_cart);
-}
+    req.data = {
+        vica_id: villa_cart.vica_id,
+        item: villa_cart.line_items,
+        days: villa_cart.lite_id
+    }
 
-const create = async (req, res) => {
-    const villa_cart = await req.context.models.Villa_cart.create({
-        vica_created_on:req.body.vica_created_on,
-        vica_status:req.body.vica_status,
-        vica_user_id:req.body.vica_user_id,
-    });
-    return res.send(villa_cart);
+    next();
 }
 
 const update = async (req, res) => {
+    const { vica_id, vica_created_on, vica_status, vica_user_id } = req.body;
     const villa_cart = await req.context.models.Villa_cart.update(
         {
-            vica_created_on:req.body.vica_created_on,
-            vica_status:req.body.vica_status,
-            vica_user_id:req.body.vica_user_id,
+            vica_id: vica_id,
+            vica_created_on: vica_created_on,
+            vica_status: vica_status,
+            vica_user_id: vica_user_id,
         },
-        { returning: true, where: { vica_id: req.params.id } }
+        { returning : true, where: { vica_id : req.params.id}}
     );
     return res.send(villa_cart);
 }
 
-const remove = async (req, res) => {
-    await req.context.models.Villa_cart.destroy({
-        where: { vica_id: req.params.id }
-    }).then(result => {
-        console.log(result);
-        return res.send("delete " + result + " rows.");
-    });
+const update1 = async (req, res, next) => {
+    const { vica_id } = req.data;
+    const villa_cart = await req.context.models.Villa_cart.update(
+        {
+            vica_id: vica_id,
+            vica_status: "closed",
+        },
+        { returning: true, where: { vica_id: vica_id } }
+    );
 
-}
-const rawSQL = async (req, res) => {
-    await sequelize.query('SELECT * FROM users where user_id = :userId',
-        { replacements: { userId: parseInt(req.params.id) }, type: sequelize.QueryTypes.SELECT }
-    ).then(result => {
-        return res.send(result);
-    })
+    next();
 }
 
 export default {
-    findAll,
-    findOne,
-    create,
-    update,
-    remove,
-    rawSQL
+    createc,
+    findOne1,
+    update1,
+    update
 }

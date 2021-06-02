@@ -65,6 +65,11 @@ const line_items = (sequelize, DataTypes) => {
       },
     ]
   });
-  return line_items
+  Line_items.associate = models => {
+    Line_items.belongsTo(models.Villas,{foreignKey: 'lite_villa_id'});
+    Line_items.belongsTo(models.Villa_cart,{foreignKey: 'lite_vica_id'});
+  };
+  
+  return Line_items
 };
-export default Line_items;
+export default line_items;
